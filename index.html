@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voluntariatul MEU</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content auth-modal">
+            <div class="auth-container">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login">Autentificare</button>
+                    <button class="auth-tab" data-tab="register">Înregistrare</button>
+                </div>
+
+                <!-- Formular Login -->
+                <form id="login-form" class="auth-form active">
+                    <h2>Bine ai revenit!</h2>
+                    <div class="form-group">
+                        <label for="login-username">Nume utilizator</label>
+                        <input type="text" id="login-username" placeholder="numele_tau" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Parolă</label>
+                        <input type="password" id="login-password" placeholder="Introdu parola" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Autentifică-te</button>
+                    </div>
+                </form>
+
+                <!-- Formular Înregistrare -->
+                <form id="register-form" class="auth-form">
+                    <h2>Alătură-te comunității</h2>
+                    <div class="form-group">
+                        <label for="register-name">Nume complet</label>
+                        <input type="text" id="register-name" placeholder="Nume și prenume" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-username">Nume utilizator</label>
+                        <input type="text" id="register-username" placeholder="nume_utilizator" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" placeholder="exemplu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Parolă</label>
+                        <input type="password" id="register-password" placeholder="Minimum 6 caractere" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm-password">Confirmă parola</label>
+                        <input type="password" id="register-confirm-password" placeholder="Introdu parola din nou" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Creează cont</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App (hidden until login) -->
+    <div id="app" class="hidden">
+        <header>
+            <div class="logo">
+                <img src="logo.png" alt="Voluntariat Logo" class="logo-img">
+            </div>
+            <div class="user-menu">
+                <span class="welcome-text">Bun venit, <strong id="current-username"></strong>!</span>
+                <div class="user-actions">
+                    <span class="user-score" id="header-score">0 puncte</span>
+                    <button id="logout-btn">Deconectare</button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <aside class="sidebar">
+                <div class="filter-section">
+                    <h3>Filtrează</h3>
+                    <div class="filter-option">
+                        <input type="checkbox" id="filter-urgent">
+                        <label for="filter-urgent">Urgent</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="filter-local">
+                        <label for="filter-local">În apropiere</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="filter-virtual">
+                        <label for="filter-virtual">Virtual</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="filter-show-completed">
+                        <label for="filter-show-completed">Arată finalizate</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="filter-my-events">
+                        <label for="filter-my-events">Doar anunțurile mele</label>
+                    </div>
+                    <div class="filter-option">
+                        <label for="filter-hours">Ore minime:</label>
+                        <input type="number" id="filter-hours" min="0" placeholder="0">
+                    </div>
+                </div>
+
+                <div class="score-section">
+                    <h3>Scorul tău de voluntariat</h3>
+                    <div class="score-display">
+                        <div class="score-circle">
+                            <span class="score-number" id="user-score">0</span>
+                            <span class="score-label">puncte</span>
+                        </div>
+                        <div class="score-info">
+                            <p>⏱️ <strong id="total-hours">0</strong> ore voluntariate</p>
+                            <p>🎯 <strong id="completed-events">0</strong> activități finalizate</p>
+                            <p>📢 <strong id="created-events">0</strong> anunțuri create</p>
+                        </div>
+                    </div>
+                    <div class="score-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="progress-text">Următorul nivel: <span id="next-level">50</span> puncte</div>
+                    </div>
+                </div>
+
+                <div class="stats-section">
+                    <h3>Statistici</h3>
+                    <div class="stat-item">
+                        <span class="stat-number" id="active-opportunities">0</span>
+                        <span class="stat-label">Oportunități active</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="total-volunteers">0</span>
+                        <span class="stat-label">Voluntari înregistrați</span>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="feed-container">
+                <div class="feed-header">
+                    <h2>Oportunități de voluntariat</h2>
+                    <div class="feed-actions">
+                        <div class="sort-options">
+                            <select id="sort-select">
+                                <option value="recent">Cele mai recente</option>
+                                <option value="popular">Cele mai populare</option>
+                                <option value="hours">Cele mai multe ore</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                        <button id="create-btn">Creează anunț</button>
+                    </div>
+                </div>
+
+                <div id="feed" class="feed">
+                    <!-- Cardurile vor fi adăugate aici din JavaScript -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Modal creare anunț -->
+        <div id="create-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Creează un anunț</h2>
+                <form id="event-form">
+                    <div class="form-group">
+                        <label for="event-title">Titlu activitate</label>
+                        <input id="event-title" placeholder="Ex: Ajutor la curățenia parcului">
+                    </div>
+                    <div class="form-group">
+                        <label for="event-desc">Descriere activitate</label>
+                        <textarea id="event-desc" placeholder="Descrie activitatea și ce implicații are..." rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="event-location">Locație</label>
+                        <input id="event-location" placeholder="Ex: Parcul Central, Cluj-Napoca">
+                    </div>
+                    <div class="form-group">
+                        <label for="event-hours">Număr ore credit</label>
+                        <input id="event-hours" type="number" placeholder="Ex: 4">
+                    </div>
+                    <div class="form-group">
+                        <label for="event-date">Data</label>
+                        <input id="event-date" type="date">
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="event-urgent">
+                        <label for="event-urgent">Marchează ca urgent</label>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="event-virtual">
+                        <label for="event-virtual">Activitate virtuală</label>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" id="post-event" class="btn-primary">Postează anunț</button>
+                        <button type="button" id="close-modal" class="btn-secondary">Anulează</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal detalii anunț -->
+        <div id="details-modal" class="modal hidden">
+            <div class="modal-content" id="details-content">
+                <!-- Conținutul va fi populat din JavaScript -->
+            </div>
+        </div>
+
+        <!-- Modal confirmare finalizare -->
+        <div id="completion-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Felicitări! 🎉</h2>
+                <div class="completion-info">
+                    <p>Ai finalizat cu succes activitatea:</p>
+                    <h3 id="completed-event-title"></h3>
+                    <div class="points-earned">
+                        <span class="points-badge">+<span id="earned-points">0</span> puncte</span>
+                    </div>
+                    <p>Ai acumulat <strong id="earned-hours">0</strong> ore de voluntariat!</p>
+                    <p class="completion-note">Activitatea a fost mutată în istoric.</p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-primary" id="confirm-completion">Super!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
